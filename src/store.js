@@ -1,15 +1,9 @@
 import { createStore } from "redux";
-
-const reducer = (state = 0, action) => {
-    switch(action.type){
-        case 'INCREMENT_FIRST': return state + 1;
-        case 'INCREMENT_SECOND': return state + 1;
-        default: return state;
-    }
-}
+import rootReducer from './reducers/rootReducer';
 
 
-let store = createStore(reducer);
+
+let store = createStore(rootReducer);
 
 
 export default store;
