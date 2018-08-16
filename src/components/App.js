@@ -112,7 +112,9 @@ const Game = ({
   onPlusTwoTeamBClick,
   onPlusThreeTeamBClick,
   counterA,
-  counterB
+  counterB,
+  setA,
+  setB
 }) => (
   <div className="columns is-mobile is-centered is-vcentered">
     <div className="column is-one-fifth has-text-centered">
@@ -146,6 +148,7 @@ const Game = ({
         <div className="column is-one-third is-centered">
           <h1 className="title has-text-centered">Team 1</h1>
           <h1 className="subtitle is-1 has-text-centered">{counterA}</h1>
+          <h1 className="has-text-centered">SET {setA}</h1>
         </div>
         <div className="column is-one-third is-centered">
           <h1 className="title has-text-centered">
@@ -157,6 +160,7 @@ const Game = ({
         <div className="column is-one-third is-centered">
           <h1 className="title has-text-centered">Team 2</h1>
           <h1 className="subtitle is-1 has-text-centered">{counterB}</h1>
+          <h1 className="has-text-centered">SET {setB}</h1>
         </div>
       </div>
     </div>
@@ -190,30 +194,47 @@ const Game = ({
 );
 const mapStateToGameProps = state => {
   return {
-    counterA: state.counterA,
-    counterB: state.counterB
+    counterA: state.counterA.value,
+    counterB: state.counterB.value,
+    setA: state.setA.value,
+    setB: state.setB.value
+  };
+};
+
+const incrementCounterBy = (name, incrementByNumber) => {
+  return (dispatch, getState) => {
+
+    if (getState()['counter'+name].limit <= getState()['counter'+name].value) {
+      dispatch({ type: "INCREMENT_SET_COUNTER", name: name });
+      return dispatch({ type: "RESET", name: name });
+    }
+    return dispatch({
+      type: "INCREMENT",
+      name: name,
+      incrementBy: incrementByNumber
+    });
   };
 };
 
 const mapDispatchToGameProps = dispatch => {
   return {
     onPlusOneTeamAClick: () => {
-      dispatch({ type: "INCREMENT_A", incrementBy: 1 });
+      dispatch(incrementCounterBy("A", 1));
     },
     onPlusTwoTeamAClick: () => {
-      dispatch({ type: "INCREMENT_A", incrementBy: 2 });
+      dispatch(incrementCounterBy("A", 2));
     },
     onPlusThreeTeamAClick: () => {
-      dispatch({ type: "INCREMENT_A", incrementBy: 3 });
+      dispatch(incrementCounterBy("A", 3));
     },
     onPlusOneTeamBClick: () => {
-      dispatch({ type: "INCREMENT_B", incrementBy: 1 });
+      dispatch(incrementCounterBy("B", 1));
     },
     onPlusTwoTeamBClick: () => {
-      dispatch({ type: "INCREMENT_B", incrementBy: 2 });
+      dispatch(incrementCounterBy("B", 2));
     },
     onPlusThreeTeamBClick: () => {
-      dispatch({ type: "INCREMENT_B", incrementBy: 3 });
+      dispatch(incrementCounterBy("B", 3));
     }
   };
 };
