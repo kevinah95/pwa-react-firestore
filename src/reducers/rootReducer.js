@@ -29,6 +29,8 @@ function setCounter(state = { value: 0, limit: 10 }, action) {
       return { ...state, value: state.value + 1 };
     case `DECREMENT_SET_COUNTER`:
       return { ...state, value: state.value - 1 };
+    case "RESET_SET_COUNTER":
+      return { ...state, value: 0 };
     default:
       return state;
   }
@@ -48,8 +50,8 @@ const rootReducer = combineReducers({
   counterB: createNamedWrapperReducer(counter, "B"),
   counterC: createNamedWrapperReducer(counter, "C"),
   timer,
-  setA: createNamedWrapperReducer(setCounter,"A"),
-  setB: createNamedWrapperReducer(setCounter,"B")
+  setA: createNamedWrapperReducer(setCounter, "A"),
+  setB: createNamedWrapperReducer(setCounter, "B")
 });
 
 export default rootReducer;

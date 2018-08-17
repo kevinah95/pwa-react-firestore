@@ -1,70 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-
-const formattedSeconds = sec =>
-  ("0" + Math.floor((sec % 3600) / 60)).slice(-2) +
-  ":" +
-  ("0" + (sec % 60)).slice(-2);
-
-class StopWatchTimer extends Component {
-  state = {
-    secondsElapsed: 0
-  };
-
-  constructor(props) {
-    super(props);
-    this.incrementer = null;
-  }
-
-  stopTimer() {
-    if (this.incrementer !== null) {
-      clearInterval(this.incrementer);
-      this.setState({
-        secondsElapsed: 0
-      });
-    }
-  }
-  incrementTimer() {
-    this.incrementer = setInterval(
-      () =>
-        this.setState({
-          secondsElapsed: this.state.secondsElapsed + 1
-        }),
-      1000
-    );
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (this.props.timer.isOn !== prevProps.timer.isOn) {
-      if (this.props.timer.isOn) {
-        this.incrementTimer();
-      } else {
-        this.stopTimer();
-      }
-    }
-  }
-
-  render() {
-    return (
-      <div>
-        <span>Time</span>
-        <h1 className="title has-text-centered">
-          {formattedSeconds(this.state.secondsElapsed)}
-        </h1>
-      </div>
-    );
-  }
-}
-
-const mapStateToStopWatchTimerProps = state => {
-  return {
-    timer: state.timer
-  };
-};
-
-const VisibleStopWatchTimer = connect(mapStateToStopWatchTimerProps)(
-  StopWatchTimer
-);
+import StopWatchTimerContainer from "../containers/StopWatchTimerContainer";
 
 const Top = ({ onStartTimer }) => (
   <div className="columns is-mobile is-centered is-vcentered">
@@ -85,7 +21,7 @@ const Top = ({ onStartTimer }) => (
         <span className="button">5 Sets</span>
         <span className="button">7 Sets</span>
       </div> */}
-      <VisibleStopWatchTimer />
+      <StopWatchTimerContainer />
     </div>
     <div className="column is-one-fifth is-centered has-text-centered">
       <a className="button">EDIT</a>
@@ -146,6 +82,7 @@ const Game = ({
     <div className="column is-centered">
       <div className="columns is-mobile is-centered is-vcentered">
         <div className="column is-one-third is-centered">
+        
           <h1 className="title has-text-centered">Team 1</h1>
           <h1 className="subtitle is-1 has-text-centered">{counterA}</h1>
           <h1 className="has-text-centered">SET {setA}</h1>
@@ -203,8 +140,9 @@ const mapStateToGameProps = state => {
 
 const incrementCounterBy = (name, incrementByNumber) => {
   return (dispatch, getState) => {
-
-    if (getState()['counter'+name].limit <= getState()['counter'+name].value) {
+    if (
+      getState()["counter" + name].limit <= getState()["counter" + name].value
+    ) {
       dispatch({ type: "INCREMENT_SET_COUNTER", name: name });
       return dispatch({ type: "RESET", name: name });
     }
@@ -243,17 +181,42 @@ const VisibleGame = connect(
   mapDispatchToGameProps
 )(Game);
 
-const Footer = () => (
+const resetCounters = name => {
+  return dispatch => {
+    dispatch({ type: "RESET", name: name });
+
+    return dispatch({
+      type: "RESET_SET_COUNTER",
+      name: name
+    });
+  };
+};
+
+const Footer = ({ onCleanClick }) => (
   <div className="columns is-mobile is-centered is-vcentered">
     <div className="column is-one-fifth is-centered has-text-centered">
       <a className="button">SHARE</a>
     </div>
     <div className="column is-centered has-text-centered" />
     <div className="column is-one-fifth is-centered has-text-centered">
-      <a className="button">CLEAN</a>
+      <a className="button" onClick={() => onCleanClick()}>
+        CLEAN
+      </a>
     </div>
   </div>
 );
+
+const mapDispatchToFooterProps = dispatch => ({
+  onCleanClick: () => {
+    dispatch(resetCounters("A"));
+    dispatch(resetCounters("B"));
+  }
+});
+
+const VisibleFooter = connect(
+  null,
+  mapDispatchToFooterProps
+)(Footer);
 
 class App extends Component {
   render() {
@@ -261,7 +224,7 @@ class App extends Component {
       <section className="section is-large">
         <VisibleTop />
         <VisibleGame />
-        <Footer />
+        <VisibleFooter />
       </section>
     );
   }
