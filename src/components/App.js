@@ -82,7 +82,6 @@ const Game = ({
     <div className="column is-centered">
       <div className="columns is-mobile is-centered is-vcentered">
         <div className="column is-one-third is-centered">
-        
           <h1 className="title has-text-centered">Team 1</h1>
           <h1 className="subtitle is-1 has-text-centered">{counterA}</h1>
           <h1 className="has-text-centered">SET {setA}</h1>
